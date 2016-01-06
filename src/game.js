@@ -16,6 +16,7 @@ var lifeLostText;
 var textStyle = {font: '18px Oxygen', fill: '#0095DD'}
 var playing = false;
 var startButton;
+var resetButton;
 var scoreSound;
 var gameoverSound;
 var blipSound;
@@ -28,6 +29,7 @@ function preload() {
   game.scale.pageAlignVertically = true;
   game.stage.backgroundColor = "#eee";
   game.load.image('ball', '../assets/img/ball.png');
+  game.load.image('reset', '../assets/img/reset.png');
   game.load.image('paddle', '../assets/img/paddle.png');
   game.load.image('brick', '../assets/img/brick.png')
   game.load.spritesheet('ball', '../assets/img/wobble.png', 20, 20);
@@ -82,6 +84,10 @@ function startGame() {
   playing = true;
 }
 
+function resetGame() {
+  location.reload();
+}
+
 function addLivesText() {
   livesText = game.add.text(game.world.width-5, 5, 'Lives: '+lives,
                            textStyle);
@@ -112,13 +118,16 @@ function gameover() {
   scoreSound.loop = false;
   scoreSound.stop();
 
-  gameoverSound.play(function() {
-    location.reload();
-  }, this);
+  gameoverSound.play();
 
   gameoverText = game.add.text(game.world.width*0.5, game.world.height*0.5,
                               'You lost, gameover!', textStyle)
   gameoverText.anchor.set(0.5);
+  gameoverText.visible = false;
+
+  resetButton = game.add.button(game.world.width*0.5, game.world.height*0.5 - 20,
+                                'reset', resetGame, this);
+  resetButton.anchor.set(0.5);
 
 }
 
