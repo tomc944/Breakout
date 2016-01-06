@@ -1,0 +1,7 @@
+-Speed up ball
+-Multiple balls
+-Combo multiplier
+-Leaderboard
+-Do multiple levels
+-Power ups
+-Multiple paddles
