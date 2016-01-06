@@ -24,6 +24,9 @@ var gameoverSound;
 var blipSound;
 var soundDJ;
 var gameoverText;
+var gameHeight;
+var gameWidth;
+var winText;
 
 function preload() {
   game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -54,22 +57,25 @@ function create() {
 
   gameoverSound = game.add.audio('gameover');
 
-  ball = game.add.sprite(game.world.width*0.5, game.world.height-25, 'ball');
+  ball = game.add.sprite(gameWidth, game.world.height-25, 'ball');
   ball.animations.add('wobble', [0,1,0,2,0,1,0,2,0], 24);
   ball.anchor.set(0.5);
   game.physics.enable(ball, Phaser.Physics.ARCADE);
   ball.body.collideWorldBounds = true;
   ball.body.bounce.set(1);
 
+  gameHeight = game.world.height*0.5;
+  gameWidth = game.world.width*0.5;
+
   ball.checkWorldBounds = true;
   ball.events.onOutOfBounds.add(ballLeaveScreen, this);
 
-  paddle = game.add.sprite(game.world.width*0.5, game.world.height-5, 'paddle');
+  paddle = game.add.sprite(gameWidth, game.world.height-5, 'paddle');
   paddle.anchor.set(0.5, 1);
   game.physics.enable(paddle, Phaser.Physics.ARCADE);
   paddle.body.immovable = true;
 
-  startButton = game.add.button(game.world.width*0.5, game.world.height*0.5,
+  startButton = game.add.button(gameWidth, gameHeight,
                                 'button', startGame, this, 1, 0, 2);
   startButton.anchor.set(0.5);
 
@@ -94,7 +100,7 @@ function addLivesText() {
   livesText = game.add.text(game.world.width-5, 5, 'Lives: '+lives,
                            textStyle);
   livesText.anchor.set(1,0);
-  lifeLostText = game.add.text(game.world.width*0.5, game.world.height*0.5,
+  lifeLostText = game.add.text(gameWidth, gameHeight,
                               'Life lost, click to continue', textStyle);
   lifeLostText.anchor.set(0.5);
   lifeLostText.visible = false;
@@ -105,8 +111,8 @@ function ballLeaveScreen() {
   if(lives){
     livesText.setText("Lives: "+lives);
     lifeLostText.visible = true;
-    ball.reset(game.world.width*0.5, game.world.height-25);
-    paddle.reset(game.world.width*0.5, game.world.height-5);
+    ball.reset(gameWidth, game.world.height-25);
+    paddle.reset(gameWidth, game.world.height-5);
     game.input.onDown.addOnce(function() {
       lifeLostText.visible = false;
       ball.body.velocity.set(150, -150);
@@ -122,12 +128,12 @@ function gameover() {
 
   gameoverSound.play();
 
-  gameoverText = game.add.text(game.world.width*0.5, game.world.height*0.5,
+  gameoverText = game.add.text(gameWidth, gameHeight + 50,
                               'You lost, gameover!', textStyle)
   gameoverText.anchor.set(0.5);
-  gameoverText.visible = false;
+  gameoverText.visible = true;
 
-  resetButton = game.add.button(game.world.width*0.5, game.world.height*0.5 - 20,
+  resetButton = game.add.button(gameWidth, gameHeight - 20,
                                 'reset', resetGame, this);
   resetButton.anchor.set(0.5);
 
@@ -138,7 +144,7 @@ function update() {
   game.physics.arcade.collide(ball, paddle, ballHitPaddle);
   game.physics.arcade.collide(ball, bricks, ballHitBrick);
   if(playing) {
-    paddle.x = game.input.x || game.world.width * 0.5;
+    paddle.x = game.input.x || gameWidth;
   }
 }
 
@@ -168,7 +174,14 @@ function ballHitPaddle(ball, paddle) {
 
 function checkWin() {
   if(score === brickInfo.count.row*brickInfo.count.col*10) {
-    alert('You won the game, congratulations!');
+    winText = game.add.text(gameWidth, gameHeight + 50,
+                                'You won, play again?!', textStyle)
+    winText.anchor.set(0.5);
+    winText.visible = true;
+
+    resetButton = game.add.button(gameWidth, gameHeight - 20,
+                                  'reset', resetGame, this);
+    resetButton.anchor.set(0.5);
     location.reload();
   }
 }
