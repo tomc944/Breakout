@@ -3,6 +3,8 @@ var game = new Phaser.Game(480, 320, Phaser.AUTO, null, {
 });
 
 // global variables
+
+
 var ball;
 var paddle;
 var bricks;
