@@ -33,7 +33,7 @@ function preload() {
   game.scale.pageAlignHorizontally = true;
   game.scale.pageAlignVertically = true;
   game.stage.backgroundColor = "#eee";
-  game.load.image('ball', '../assets/img/ball.png');
+  game.load.image('sam', '../assets/img/sam.png');
   game.load.image('reset', '../assets/img/reset.png');
   game.load.image('paddle', '../assets/img/paddle.png');
   game.load.image('brick', '../assets/img/brick.png')
@@ -57,8 +57,8 @@ function create() {
 
   gameoverSound = game.add.audio('gameover');
 
-  ball = game.add.sprite(gameWidth, game.world.height-25, 'ball');
-  ball.animations.add('wobble', [0,1,0,2,0,1,0,2,0], 24);
+  ball = game.add.sprite(gameWidth, game.world.height-25, 'sam');
+  // ball.animations.add('wobble', [0,1,0,2,0,1,0,2,0], 24);
   ball.anchor.set(0.5);
   game.physics.enable(ball, Phaser.Physics.ARCADE);
   ball.body.collideWorldBounds = true;
@@ -113,6 +113,7 @@ function ballLeaveScreen() {
     lifeLostText.visible = true;
     ball.reset(gameWidth, game.world.height-25);
     paddle.reset(gameWidth, game.world.height-5);
+    gameoverSound.play();
     game.input.onDown.addOnce(function() {
       lifeLostText.visible = false;
       ball.body.velocity.set(150, -150);
@@ -146,6 +147,7 @@ function update() {
   if(playing) {
     paddle.x = game.input.x || gameWidth;
   }
+  ball.angle += 2;
 }
 
 function ballHitBrick(ball, brick) {
