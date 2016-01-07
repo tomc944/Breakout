@@ -2,9 +2,6 @@ var game = new Phaser.Game(480, 320, Phaser.AUTO, null, {
   preload: preload, create: create, update: update
 });
 
-// global variables
-
-
 var ball;
 var paddle;
 var bricks;
@@ -27,6 +24,7 @@ var gameoverText;
 var gameHeight;
 var gameWidth;
 var winText;
+var hits;
 
 function preload() {
   game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -84,6 +82,8 @@ function create() {
   scoreText = game.add.text(5, 5, 'Points: 0', textStyle);
 
   addLivesText();
+
+  hits = 0;
 }
 
 function startGame() {
@@ -127,17 +127,18 @@ function gameover() {
   scoreSound.loop = false;
   scoreSound.stop();
 
+  ball.kill();
+
   gameoverSound.play();
 
   gameoverText = game.add.text(gameWidth, gameHeight + 50,
-                              'You lost, gameover!', textStyle)
+                              'You lost, game over!', textStyle)
   gameoverText.anchor.set(0.5);
   gameoverText.visible = true;
 
   resetButton = game.add.button(gameWidth, gameHeight - 20,
                                 'reset', resetGame, this);
   resetButton.anchor.set(0.5);
-
 }
 
 
@@ -169,9 +170,15 @@ function brickKill(brick) {
 }
 
 function ballHitPaddle(ball, paddle) {
+  hits += 1;
   ball.animations.play('wobble');
   blipSound.play();
   ball.body.velocity.x = -1*5*(paddle.x-ball.x);
+
+  if (hits >= 10 && paddle.width >= 20) {
+    paddle.scale.x -= 0.07;
+  }
+
 }
 
 function checkWin() {
@@ -184,7 +191,8 @@ function checkWin() {
     resetButton = game.add.button(gameWidth, gameHeight - 20,
                                   'reset', resetGame, this);
     resetButton.anchor.set(0.5);
-    location.reload();
+
+    ball.kill();
   }
 }
 
